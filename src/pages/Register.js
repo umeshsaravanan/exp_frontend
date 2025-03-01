@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
 
-const Login = () => {
+const Register = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,14 +15,14 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8080/api/login', {
+      const response = await axios.post('http://localhost:8080/api/register', {
         email,
         password,
       });
 
-      console.log('User added successfully:', response.data);
+      console.log('User registered successfully:', response.data);
     } catch (err) {
-      setError('Error occurred while adding the user.');
+      setError('Error occurred while registering the user.');
       console.error('Error:', err);
     }
   };
@@ -31,16 +32,33 @@ const Login = () => {
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
         <div className="flex items-center">
           <img src="/images/exp_logo.png" alt="logo" className="w-[50px] h-[50px]" />
-          <h2 className="text-3xl font-bold text-[#029688]">
-            Expense Tracker
-          </h2>
+          <h2 className="text-3xl font-bold text-[#029688]">Expense Tracker</h2>
         </div>
 
         <h3 className="text-3xl font-bold text-center mb-6 text-gray-700">
-          Login
+          Register
         </h3>
 
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-600 text-start"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#029688]"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -81,14 +99,14 @@ const Login = () => {
 
           {error && <ErrorMessage msg={error} />}
 
-          <Button type="primary" text="Login" customStyle="w-full" onClick={handleSubmit} />
+          <Button type="primary" text="Register" customStyle="w-full" />
         </form>
 
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-blue-500 hover:underline hover:text-blue-700">
-              Register
+            Already have an account?{' '}
+            <Link to="/" className="text-blue-500 hover:underline hover:text-blue-700">
+              Login
             </Link>
           </p>
         </div>
@@ -97,4 +115,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
