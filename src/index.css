@@ -3,3 +3,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* @import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Nanum+Gothic+Coding&display=swap');
+
+.inconsolata-font {
+   font-family: "Nanum Gothic Coding", monospace;
+  font-weight: 400;
+  font-style: normal;
+} */
