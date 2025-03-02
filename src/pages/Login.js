@@ -5,11 +5,12 @@ import { Link } from 'react-router-dom';
 import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
 import GoogleLoginButton from '../components/Buttons/GoogleLoginButton';
+import { useContextApi } from '../contexts/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const {error, setErrorCallback} = useContextApi();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,13 +23,13 @@ const Login = () => {
 
       console.log('User added successfully:', response.data);
     } catch (err) {
-      setError('Error occurred while adding the user.');
+      setErrorCallback('Error occurred while adding the user.');
       console.error('Error:', err);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-black p-1 sm:p-0">
+    <div className="flex justify-center items-center min-h-screen p-2 sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
         <div className="flex items-center">
           <img src="/images/exp_logo.png" alt="logo" className="w-[50px] h-[50px]" />

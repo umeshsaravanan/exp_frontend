@@ -7,7 +7,7 @@ const Button = ({text, type, customStyle, onClick=() =>{}, children}) => {
         buttonClass += customStyle;
     }
     if(type === "primary"){
-        buttonClass += " bg-blue-500 text-white hover:bg-blue-600 ";
+        buttonClass += " bg-[#029688] text-white hover:bg-[#256a63] ";
     }
     if(type === "secondary"){
         buttonClass += " bg-gray-200 hover:bg-gray-400 ";
@@ -16,7 +16,7 @@ const Button = ({text, type, customStyle, onClick=() =>{}, children}) => {
         buttonClass += " bg-red-500 text-white hover:bg-red-600 ";
     }
     if (type === "google") {
-        buttonClass += " w-full justify-center items-center flex gap-2 text-black outline outline-1 outline-black hover:bg-blue-600 hover:text-white hover:outline-0 ";
+        buttonClass += " w-full justify-center items-center flex gap-2 text-black outline outline-1 outline-black hover:bg-[#256a63] hover:text-white hover:outline-[#256a63] ";
     }
 
   return (
