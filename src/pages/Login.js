@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
+import GoogleLoginButton from '../components/Buttons/GoogleLoginButton';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -82,6 +83,7 @@ const Login = () => {
           {error && <ErrorMessage msg={error} />}
 
           <Button type="primary" text="Login" customStyle="w-full" onClick={handleSubmit} />
+          <GoogleLoginButton/>
         </form>
 
         <div className="mt-4 text-center">
