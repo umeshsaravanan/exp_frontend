@@ -18,6 +18,7 @@ const Register = () => {
 
     try {
       const response = await axios.post('http://localhost:8080/api/register', {
+        name : username,
         email,
         password,
       });
@@ -107,7 +108,7 @@ const Register = () => {
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Already have an account?{' '}
-            <Link to="/" className="text-blue-500 hover:underline hover:text-blue-700">
+            <Link to="/" className="text-[#029688] hover:underline hover:text-[#256a63]">
               Login
             </Link>
           </p>
