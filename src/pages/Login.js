@@ -10,7 +10,7 @@ import { useContextApi } from '../contexts/AuthContext';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const {error, setErrorCallback} = useContextApi();
+  const { error, setErrorCallback } = useContextApi();
 
   const navigate = useNavigate();
 
@@ -23,8 +23,13 @@ const Login = () => {
         password,
       });
 
-      if(data)
-      navigate("/dashboard");
+      if (data > 0)
+        navigate("/dashboard");
+      else if (data === 0)
+        setErrorCallback("Invalid Password");
+      else
+        setErrorCallback("User not found");
+      
     } catch (err) {
       setErrorCallback('Error occurred while adding the user.');
       console.error('Error:', err);
@@ -60,7 +65,7 @@ const Login = () => {
               className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#029688]"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => { setErrorCallback("");setEmail(e.target.value)}}
+              onChange={(e) => { setErrorCallback(""); setEmail(e.target.value) }}
               required
             />
           </div>
@@ -79,7 +84,7 @@ const Login = () => {
               className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#029688]"
               placeholder="Enter your password"
               value={password}
-              onChange={(e) => { setErrorCallback(""); setPassword(e.target.value)}}
+              onChange={(e) => { setErrorCallback(""); setPassword(e.target.value) }}
               required
             />
           </div>
@@ -87,7 +92,7 @@ const Login = () => {
           {error && <ErrorMessage msg={error} />}
 
           <Button type="primary" text="Login" customStyle="w-full" />
-          <GoogleLoginButton/>
+          <GoogleLoginButton />
         </form>
 
         <div className="mt-4 text-center">
