@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
@@ -12,16 +12,19 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const {error, setErrorCallback} = useContextApi();
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8080/api/login', {
+      const { data } = await axios.post('http://localhost:8080/api/login', {
         email,
         password,
       });
 
-      console.log('User added successfully:', response.data);
+      if(data)
+      navigate("/dashboard");
     } catch (err) {
       setErrorCallback('Error occurred while adding the user.');
       console.error('Error:', err);
@@ -42,7 +45,7 @@ const Login = () => {
           Login
         </h3>
 
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -57,7 +60,7 @@ const Login = () => {
               className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#029688]"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setErrorCallback("");setEmail(e.target.value)}}
               required
             />
           </div>
@@ -76,14 +79,14 @@ const Login = () => {
               className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#029688]"
               placeholder="Enter your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => { setErrorCallback(""); setPassword(e.target.value)}}
               required
             />
           </div>
 
           {error && <ErrorMessage msg={error} />}
 
-          <Button type="primary" text="Login" customStyle="w-full" onClick={handleSubmit} />
+          <Button type="primary" text="Login" customStyle="w-full" />
           <GoogleLoginButton/>
         </form>
 

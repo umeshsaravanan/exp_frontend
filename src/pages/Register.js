@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
@@ -10,20 +10,22 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { error, setErrorCallback } = useContextApi();
 
+  const { error, setErrorCallback } = useContextApi();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8080/api/register', {
+      const { data } = await axios.post('http://localhost:8080/api/register', {
         name : username,
         email,
         password,
       });
 
-      console.log('User registered successfully:', response.data);
+      if(data)
+        navigate("/");
     } catch (err) {
       setErrorCallback('Error occurred while registering the user.');
       console.error('Error:', err);

@@ -10,7 +10,7 @@ const LandingPage = () => {
                     return (
                         <Link to={`/${type.toLowerCase()}`} key={index}>
                             <div
-                                className="p-4 w-[80vw] sm:w-[50vw] text-white bg-[#029688] rounded-lg shadow-md hover:bg-[#028777] hover:shadow-2xl cursor-pointer transition-all ease-in-out duration-300"
+                                className="p-4 w-[80vw] sm:w-[50vw] border-2 border-white text-white bg-[#029688] rounded-lg shadow-md hover:bg-[#028777] hover:shadow-2xl cursor-pointer transition-all ease-in-out duration-300"
                             >
                                 <p className="text-center text-xl">{type}</p> 
                             </div>
