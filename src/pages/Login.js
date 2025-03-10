@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
@@ -12,8 +12,6 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const { error, setErrorCallback } = useContextApi();
 
-  const navigate = useNavigate();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -24,12 +22,12 @@ const Login = () => {
       });
 
       if (data > 0)
-        navigate("/dashboard");
+        localStorage.setItem("user", email);
       else if (data === 0)
         setErrorCallback("Invalid Password");
       else
         setErrorCallback("User not found");
-      
+
     } catch (err) {
       setErrorCallback('Error occurred while adding the user.');
       console.error('Error:', err);
