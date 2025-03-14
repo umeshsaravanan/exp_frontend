@@ -18,20 +18,16 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post('http://localhost:8080/api/login', {
+      const response = await axios.post('http://localhost:8080/api/login', {
         email,
         password,
-      });
-
-      if (data > 0){
-        localStorage.setItem("user", email);
-        navigate("/dashboard");
+      }, { withCredentials: true });
+      
+      if (response.data === "Login successful"){
+        navigate("/");
       }
-      else if (data === 0)
-        setErrorCallback("Invalid Password");
-      else
-        setErrorCallback("User not found");
 
+      setErrorCallback(response.data);
     } catch (err) {
       setErrorCallback('Login Error');
       console.error('Error:', err);

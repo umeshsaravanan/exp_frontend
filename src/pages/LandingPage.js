@@ -1,8 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
-    const menu = ["Manage Expense", "Family", "Trip"]
+    const menu = ["Manage Expense", "Family", "Trip"];
+
+    useEffect(() =>{
+        axios.get('http://localhost:8080/api/dummy',{ withCredentials: true });
+    },[])
+
     return (
         <div className="flex justify-center items-center min-h-screen p-2 sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">
             <div className="flex flex-col space-y-4">  

@@ -12,9 +12,9 @@ function App() {
       <Router> 
         <AuthContext>
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<LandingPage />} />
+            <Route path="/" element={<LandingPage />} />
           </Routes>
         </AuthContext>
       </Router>
