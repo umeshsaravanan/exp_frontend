@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AuthContext from './contexts/AuthContext';
 import LandingPage from './pages/LandingPage';
+import ManageExpense from './pages/ManageExpense';
 
 function App() {
   return (
@@ -12,9 +13,10 @@ function App() {
       <Router> 
         <AuthContext>
           <Routes>
-            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/" element={<LandingPage />} />
+            <Route path="/expense" element={<ManageExpense />} />
           </Routes>
         </AuthContext>
       </Router>
