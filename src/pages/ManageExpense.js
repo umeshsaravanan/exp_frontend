@@ -53,7 +53,7 @@ const ManageExpense = () => {
                     </div>
                 </div>
 
-                <div className="flex justify-center items-center" onClick={() => setAddClick(true)}>
+                <div className="flex justify-center items-center cursor-pointer" onClick={() => setAddClick(true)}>
                     <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-6">
                         <div className="flex gap-3 justify-between">
                             <h3 className={`font-bold ${addClick ? '' : 'w-full text-center'}`}>Add Your Expense</h3>
