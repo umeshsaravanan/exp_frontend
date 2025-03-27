@@ -3,14 +3,114 @@ import { FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 import AddExpense from '../components/AddExpense';
 import { useDayContext } from '../contexts/DayContext';
+import ExpenseCard from '../components/ExpenseCard';
+
+
+const expenses = [
+    {
+        expensesName: 'tea',
+        amount: 20,
+    },
+    {
+        expensesName: 'food',
+        amount: 40,
+    },
+    {
+        expensesName: 'snacks',
+        amount: 60,
+    },
+    {
+        expensesName: 'proteins',
+        amount: 80,
+    },
+    {
+        expensesName: 'outing',
+        amount: 200,
+    },
+    {
+        expensesName: 'tickets',
+        amount: 500,
+    },
+    {
+        expensesName: 'tea',
+        amount: 20,
+    },
+    {
+        expensesName: 'food',
+        amount: 40,
+    },
+    {
+        expensesName: 'snacks',
+        amount: 60,
+    },
+    {
+        expensesName: 'proteins',
+        amount: 80,
+    },
+    {
+        expensesName: 'outing',
+        amount: 200,
+    },
+    {
+        expensesName: 'tickets',
+        amount: 500,
+    },
+    {
+        expensesName: 'tea',
+        amount: 20,
+    },
+    {
+        expensesName: 'food',
+        amount: 40,
+    },
+    {
+        expensesName: 'snacks',
+        amount: 60,
+    },
+    {
+        expensesName: 'proteins',
+        amount: 80,
+    },
+    {
+        expensesName: 'outing',
+        amount: 200,
+    },
+    {
+        expensesName: 'tickets',
+        amount: 500,
+    },
+    {
+        expensesName: 'tea',
+        amount: 20,
+    },
+    {
+        expensesName: 'food',
+        amount: 40,
+    },
+    {
+        expensesName: 'snacks',
+        amount: 60,
+    },
+    {
+        expensesName: 'proteins',
+        amount: 80,
+    },
+    {
+        expensesName: 'outing',
+        amount: 200,
+    },
+    {
+        expensesName: 'tickets',
+        amount: 500,
+    }
+]
 
 const ManageExpense = () => {
-    const {currentDate, currentDayIndex, moveDay} = useDayContext();
+    const { currentDate, currentDayIndex, moveDay } = useDayContext();
 
     const [addClick, setAddClick] = useState(false);
 
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    
     const todayIndex = new Date().getDay();
     const todayDate = new Date().toLocaleDateString();
 
@@ -24,7 +124,8 @@ const ManageExpense = () => {
 
     return (
         <div className="h-screen min-h-screen sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">
-            <div className="flex flex-col justify-between h-full">
+            <div className="h-full flex flex-col">
+                {/* Date Header */}
                 <div className="flex justify-center items-center">
                     <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-6">
                         <h2 className="text-center text-lg font-medium">{formattedDate}</h2>
@@ -53,7 +154,15 @@ const ManageExpense = () => {
                     </div>
                 </div>
 
-                <div className="flex justify-center items-center cursor-pointer" onClick={() => setAddClick(true)}>
+                {/* Expense List */}
+                <div className="flex-1 overflow-auto w-full max-w-md mx-auto">
+                    {expenses.map((expense) => (
+                        <ExpenseCard key={expense.expensesName} expenseName={expense.expensesName} amount={expense.amount} />
+                    ))}
+                </div>
+
+                <div className="flex justify-center items-center relative"
+                    onClick={() => setAddClick(true)}>
                     <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-6">
                         <div className="flex gap-3 justify-between">
                             <h3 className={`font-bold ${addClick ? '' : 'w-full text-center'}`}>Add Your Expense</h3>
@@ -63,7 +172,7 @@ const ManageExpense = () => {
                                 </span>
                             )}
                         </div>
-                        {addClick && <AddExpense/>}
+                        {addClick && <AddExpense />}
                     </div>
                 </div>
             </div>
