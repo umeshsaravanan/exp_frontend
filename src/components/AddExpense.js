@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import Button from "./Buttons/Button";
+import axios from 'axios';
+import { useDayContext } from '../contexts/DayContext';
 
 const AddExpense = () => {
     const [category, setCategory] = useState('');
@@ -8,6 +10,7 @@ const AddExpense = () => {
     const [time, setTime] = useState(new Date().toISOString().slice(0, 16));
     const [description, setDescription] = useState('');
 
+    const {currentDate} = useDayContext();
     useEffect(() => {
         const currentTime = new Date();
         const hours = String(currentTime.getHours()).padStart(2, '0');
@@ -15,6 +18,12 @@ const AddExpense = () => {
         const formattedTime = `${hours}:${minutes}`;
         setTime(formattedTime);
     }, []);
+
+    const handleAdd = () =>{
+        axios.post('http://localhost:8080/api/add',{
+            type, time, category, description, currentDate
+        })
+    }
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
@@ -81,7 +90,7 @@ const AddExpense = () => {
                     />
                 </div>
             </div>
-            <Button type="primary" text="Add" customStyle="w-full mt-3"/>
+            <Button type="primary" text="Add" customStyle="w-full mt-3" onClick={handleAdd}/>
         </div>
     );
 };
