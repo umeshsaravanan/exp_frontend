@@ -11,6 +11,7 @@ const AddExpense = () => {
     const [description, setDescription] = useState('');
 
     const {currentDate} = useDayContext();
+
     useEffect(() => {
         const currentTime = new Date();
         const hours = String(currentTime.getHours()).padStart(2, '0');
@@ -20,9 +21,10 @@ const AddExpense = () => {
     }, []);
 
     const handleAdd = () =>{
-        axios.post('http://localhost:8080/api/add',{
-            type, time, category, description, currentDate
-        })
+        axios.post('http://localhost:8080/api/expense/addExpense',{
+            // type, time: convertTimetoTimestamp(time), category, description, currentDate
+            expenseName: 'food', categoryId: 2,amount: 100.50, addedAt: convertTimetoTimestamp(time)
+        }, { withCredentials: true })
     }
 
     return (
@@ -96,3 +98,23 @@ const AddExpense = () => {
 };
 
 export default AddExpense;
+
+const convertTimetoTimestamp = (time) => {
+    const currentDate = new Date();
+    const [hours, minutes] = time.split(':').map(Number);
+
+    const adjustedDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        currentDate.getDate(),
+        hours,
+        minutes,
+        currentDate.getSeconds(),
+        currentDate.getMilliseconds()
+    );
+
+    return adjustedDate.toISOString();
+
+    // Alternative: Return as JavaScript Date object if your ORM handles conversion
+    // return adjustedDate;
+};

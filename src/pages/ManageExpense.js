@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 import AddExpense from '../components/AddExpense';
 import { useDayContext } from '../contexts/DayContext';
 import ExpenseCard from '../components/ExpenseCard';
+import axios from 'axios';
 
 
 const expenses = [
@@ -121,6 +122,10 @@ const ManageExpense = () => {
         month: 'long',
         day: 'numeric',
     });
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/api/expense/expenses', { withCredentials: true })
+    }, []);
 
     return (
         <div className="h-screen min-h-screen sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">
