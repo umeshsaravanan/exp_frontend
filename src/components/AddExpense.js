@@ -23,7 +23,7 @@ const AddExpense = () => {
     const handleAdd = () =>{
         axios.post('http://localhost:8080/api/expense/addExpense',{
             // type, time: convertTimetoTimestamp(time), category, description, currentDate
-            expenseName: 'food', categoryId: 2,amount: 100.50, addedAt: convertTimetoTimestamp(time)
+            expenseName: 'food', categoryId: 2,amount: 100.50, addedAt: convertTimetoTimestamp(time, currentDate)
         }, { withCredentials: true })
     }
 
@@ -99,8 +99,8 @@ const AddExpense = () => {
 
 export default AddExpense;
 
-const convertTimetoTimestamp = (time) => {
-    const currentDate = new Date();
+const convertTimetoTimestamp = (time, selectedDate) => {
+    const currentDate = new Date(selectedDate);
     const [hours, minutes] = time.split(':').map(Number);
 
     const adjustedDate = new Date(

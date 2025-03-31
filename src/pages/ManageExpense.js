@@ -124,8 +124,14 @@ const ManageExpense = () => {
     });
 
     useEffect(() => {
-        axios.get('http://localhost:8080/api/expense/expenses', { withCredentials: true })
-    }, []);
+        if (!currentDate) return;
+
+        const formattedDate = new Date(currentDate).toISOString().split('T')[0];
+        axios.get(`http://localhost:8080/api/expense/expenses/${formattedDate}`, { withCredentials: true })
+            .then(response => console.log(response.data))
+            .catch(error => console.error(error));
+
+    }, [currentDate]);
 
     return (
         <div className="h-screen min-h-screen sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">
