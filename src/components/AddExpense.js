@@ -1,43 +1,68 @@
 import React, { useEffect, useState } from 'react';
-
 import Button from "./Buttons/Button";
 import axios from 'axios';
 import { useDayContext } from '../contexts/DayContext';
 
 const AddExpense = () => {
-    const [category, setCategory] = useState('');
-    const [type, setType] = useState('');
-    const [time, setTime] = useState(new Date().toISOString().slice(0, 16));
-    const [description, setDescription] = useState('');
+    const { currentDate } = useDayContext();
 
-    const {currentDate} = useDayContext();
+    const [expense, setExpense] = useState({
+        category: '',
+        type: '',
+        amount: '',
+        time: new Date().toISOString().slice(0, 16), // Default time
+    });
 
     useEffect(() => {
         const currentTime = new Date();
-        const hours = String(currentTime.getHours()).padStart(2, '0');
-        const minutes = String(currentTime.getMinutes()).padStart(2, '0');
-        const formattedTime = `${hours}:${minutes}`;
-        setTime(formattedTime);
+        const formattedTime = currentTime.toTimeString().slice(0, 5); // HH:mm format
+        setExpense((prev) => ({ ...prev, time: formattedTime }));
     }, []);
 
-    const handleAdd = () =>{
-        axios.post('http://localhost:8080/api/expense/addExpense',{
-            // type, time: convertTimetoTimestamp(time), category, description, currentDate
-            expenseName: 'food', categoryId: 2,amount: 100.50, addedAt: convertTimetoTimestamp(time, currentDate)
-        }, { withCredentials: true })
-    }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setExpense((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleAdd = () => {
+        axios.post(
+            'http://localhost:8080/api/expense/addExpense',
+            {
+                expenseName: expense.category,
+                categoryId: 2,
+                type: expense.type,
+                amount: parseFloat(expense.amount),
+                addedAt: convertTimetoTimestamp(expense.time, currentDate),
+            },
+            { withCredentials: true }
+        );
+    };
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
             <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+                        Amount
+                    </label>
+                    <input
+                        type="text"
+                        id="amount"
+                        name="amount"
+                        value={expense.amount}
+                        onChange={handleChange}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#029688] focus:border-[#029688] sm:text-sm"
+                    />
+                </div>
                 <div>
                     <label htmlFor="category" className="block text-sm font-medium text-gray-700">
                         Category
                     </label>
                     <select
                         id="category"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        name="category"
+                        value={expense.category}
+                        onChange={handleChange}
                         className="cursor-pointer mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#029688] focus:border-[#029688] sm:text-sm"
                     >
                         <option value="">Select Category</option>
@@ -47,15 +72,18 @@ const AddExpense = () => {
                         <option value="snacks">Snacks</option>
                     </select>
                 </div>
+            </div>
 
+            <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-                        Type
+                        In/Out
                     </label>
                     <select
                         id="type"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
+                        name="type"
+                        value={expense.type}
+                        onChange={handleChange}
                         className="cursor-pointer mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#029688] focus:border-[#029688] sm:text-sm"
                     >
                         <option value="">Select Type</option>
@@ -63,9 +91,7 @@ const AddExpense = () => {
                         <option value="out">Out</option>
                     </select>
                 </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="time" className="block text-sm font-medium text-gray-700">
                         Time
@@ -73,32 +99,21 @@ const AddExpense = () => {
                     <input
                         type="time"
                         id="time"
-                        value={time}
-                        onChange={(e) => setTime(e.target.value)}
+                        name="time"
+                        value={expense.time}
+                        onChange={handleChange}
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#029688] focus:border-[#029688] sm:text-sm"
                     />
                 </div>
-
-                <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                        Description
-                    </label>
-                    <textarea
-                        id="description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        rows="3"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#029688] focus:border-[#029688] sm:text-sm resize-none"
-                    />
-                </div>
             </div>
-            <Button type="primary" text="Add" customStyle="w-full mt-3" onClick={handleAdd}/>
+            <Button type="primary" text="Add" customStyle="w-full mt-3" onClick={handleAdd} />
         </div>
     );
 };
 
 export default AddExpense;
 
+// Utility function to convert time & date to timestamp
 const convertTimetoTimestamp = (time, selectedDate) => {
     const currentDate = new Date(selectedDate);
     const [hours, minutes] = time.split(':').map(Number);
@@ -109,12 +124,9 @@ const convertTimetoTimestamp = (time, selectedDate) => {
         currentDate.getDate(),
         hours,
         minutes,
-        currentDate.getSeconds(),
-        currentDate.getMilliseconds()
+        new Date().getSeconds(),
+        new Date().getMilliseconds()
     );
 
     return adjustedDate.toISOString();
-
-    // Alternative: Return as JavaScript Date object if your ORM handles conversion
-    // return adjustedDate;
 };

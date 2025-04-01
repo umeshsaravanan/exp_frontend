@@ -5,111 +5,15 @@ import AddExpense from '../components/AddExpense';
 import { useDayContext } from '../contexts/DayContext';
 import ExpenseCard from '../components/ExpenseCard';
 import axios from 'axios';
-
-
-const expenses = [
-    {
-        expensesName: 'tea',
-        amount: 20,
-    },
-    {
-        expensesName: 'food',
-        amount: 40,
-    },
-    {
-        expensesName: 'snacks',
-        amount: 60,
-    },
-    {
-        expensesName: 'proteins',
-        amount: 80,
-    },
-    {
-        expensesName: 'outing',
-        amount: 200,
-    },
-    {
-        expensesName: 'tickets',
-        amount: 500,
-    },
-    {
-        expensesName: 'tea',
-        amount: 20,
-    },
-    {
-        expensesName: 'food',
-        amount: 40,
-    },
-    {
-        expensesName: 'snacks',
-        amount: 60,
-    },
-    {
-        expensesName: 'proteins',
-        amount: 80,
-    },
-    {
-        expensesName: 'outing',
-        amount: 200,
-    },
-    {
-        expensesName: 'tickets',
-        amount: 500,
-    },
-    {
-        expensesName: 'tea',
-        amount: 20,
-    },
-    {
-        expensesName: 'food',
-        amount: 40,
-    },
-    {
-        expensesName: 'snacks',
-        amount: 60,
-    },
-    {
-        expensesName: 'proteins',
-        amount: 80,
-    },
-    {
-        expensesName: 'outing',
-        amount: 200,
-    },
-    {
-        expensesName: 'tickets',
-        amount: 500,
-    },
-    {
-        expensesName: 'tea',
-        amount: 20,
-    },
-    {
-        expensesName: 'food',
-        amount: 40,
-    },
-    {
-        expensesName: 'snacks',
-        amount: 60,
-    },
-    {
-        expensesName: 'proteins',
-        amount: 80,
-    },
-    {
-        expensesName: 'outing',
-        amount: 200,
-    },
-    {
-        expensesName: 'tickets',
-        amount: 500,
-    }
-]
+import EmptyExpense from '../components/EmptyMessage';
+import Loader from '../components/Loader';
 
 const ManageExpense = () => {
     const { currentDate, currentDayIndex, moveDay } = useDayContext();
 
     const [addClick, setAddClick] = useState(false);
+    const [expenses, setExpenses] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const todayIndex = new Date().getDay();
@@ -124,13 +28,24 @@ const ManageExpense = () => {
     });
 
     useEffect(() => {
-        if (!currentDate) return;
+        const fetchExpenses = async () => {
+            if (!currentDate) return;
 
-        const formattedDate = new Date(currentDate).toISOString().split('T')[0];
-        axios.get(`http://localhost:8080/api/expense/expenses/${formattedDate}`, { withCredentials: true })
-            .then(response => console.log(response.data))
-            .catch(error => console.error(error));
+            setIsLoading(true);
 
+            try {
+                const formattedDate = new Date(currentDate).toISOString().split('T')[0];
+                const response = await axios.get(`http://localhost:8080/api/expense/expenses/${formattedDate}`, { withCredentials: true });
+                setExpenses(response?.data || []);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        setExpenses([]);
+        fetchExpenses();
     }, [currentDate]);
 
     return (
@@ -167,9 +82,7 @@ const ManageExpense = () => {
 
                 {/* Expense List */}
                 <div className="flex-1 overflow-auto w-full max-w-md mx-auto">
-                    {expenses.map((expense) => (
-                        <ExpenseCard key={expense.expensesName} expenseName={expense.expensesName} amount={expense.amount} />
-                    ))}
+                    {isLoading ? <Loader/> : getExpenses(expenses, setAddClick) }
                 </div>
 
                 <div className="flex justify-center items-center relative"
@@ -192,3 +105,9 @@ const ManageExpense = () => {
 };
 
 export default ManageExpense;
+
+const getExpenses = (expenses, setAddClick) =>{
+    return expenses.length > 0 ? expenses.map((expense) => (
+        <ExpenseCard key={expense.expenseName} expenseName={expense.expenseName} amount={expense.amount} type={expense.type} />
+    )) : <EmptyExpense onClick={() => setAddClick(true)} text="No Expense For the Day" />
+}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ExpenseCard = ({ toDelete, toEdit, expenseName, amount }) => {
+const ExpenseCard = ({ toDelete, toEdit, expenseName, amount, type }) => {
     // State to track if the long press occurred
     const [longPressed, setLongPressed] = useState(false);
     const [pressTimer, setPressTimer] = useState(null);
@@ -44,7 +44,7 @@ const ExpenseCard = ({ toDelete, toEdit, expenseName, amount }) => {
         >
             <h3 className="text-lg font-semibold">{expenseName}</h3>
 
-            <p className="text-xl font-bold">{amount}</p>
+            <p className={`text-xl font-bold ${type === "in" ? 'text-green-500' : 'text-red-600'}`}>{`${type === "in" ? '+ ' : '- '}${amount}`}</p>
 
             {/* Show Edit/Delete buttons only if longPressed is true */}
             {(toDelete || toEdit) && longPressed && (
