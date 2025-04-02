@@ -3,39 +3,76 @@ import Button from "./Buttons/Button";
 import axios from 'axios';
 import { useDayContext } from '../contexts/DayContext';
 
-const AddExpense = () => {
-    const { currentDate } = useDayContext();
+//options
+//TODO : change this options to user specific and get from backend
+const options = [
+    {
+        id: 2,
+        name: 'food'
+    },
+    {
+        id: 3,
+        name: 'outing'
+    },
+    {
+        id: 4,
+        name: 'tickets'
+    },
+    {
+        id: 5,
+        name: 'snacks'
+    }
+]
+
+const AddExpense = ({ setExpensesCallback }) => {
+    const { currentDate, setIsLoadingCallback } = useDayContext();
 
     const [expense, setExpense] = useState({
         category: '',
         type: '',
         amount: '',
-        time: new Date().toISOString().slice(0, 16), // Default time
+        time: new Date().toISOString().slice(0, 16),
     });
 
     useEffect(() => {
         const currentTime = new Date();
-        const formattedTime = currentTime.toTimeString().slice(0, 5); // HH:mm format
+        const formattedTime = currentTime.toTimeString().slice(0, 5);
         setExpense((prev) => ({ ...prev, time: formattedTime }));
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setExpense((prev) => ({ ...prev, [name]: value }));
+
+        setExpense((prev) => ({
+            ...prev,
+            [name]: name === "category" ? options.find(opt => opt.id === Number(value)) : value,
+        }));
     };
 
-    const handleAdd = () => {
-        axios.post(
-            'http://localhost:8080/api/expense/addExpense',
-            {
-                expenseName: expense.category,
-                categoryId: 2,
+    const handleAdd = async () => {
+        try {
+            setIsLoadingCallback(true);
+
+            const payLoad = {
+                expenseName: expense.category.name,
+                categoryId: expense.category.id,
                 type: expense.type,
                 amount: parseFloat(expense.amount),
-                addedAt: convertTimetoTimestamp(expense.time, currentDate),
-            },
-            { withCredentials: true }
-        );
+                addedAt: convertTimetoTimestamp(expense.time, currentDate)
+            };
+
+            const { data } = await axios.post(
+                'http://localhost:8080/api/expense/addExpense',
+                payLoad,
+                { withCredentials: true }
+            );
+
+            setExpensesCallback(data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoadingCallback(false);
+        }
     };
 
     return (
@@ -61,15 +98,16 @@ const AddExpense = () => {
                     <select
                         id="category"
                         name="category"
-                        value={expense.category}
+                        value={expense.category?.id || ""}
                         onChange={handleChange}
                         className="cursor-pointer mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#029688] focus:border-[#029688] sm:text-sm"
                     >
                         <option value="">Select Category</option>
-                        <option value="food">Food</option>
-                        <option value="outing">Outing</option>
-                        <option value="tickets">Tickets</option>
-                        <option value="snacks">Snacks</option>
+                        {options.map(option => (
+                            <option key={option.id} value={option.id}>
+                                {option.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
             </div>
@@ -113,7 +151,6 @@ const AddExpense = () => {
 
 export default AddExpense;
 
-// Utility function to convert time & date to timestamp
 const convertTimetoTimestamp = (time, selectedDate) => {
     const currentDate = new Date(selectedDate);
     const [hours, minutes] = time.split(':').map(Number);
