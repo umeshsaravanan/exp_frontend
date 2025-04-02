@@ -7,6 +7,7 @@ export const useDayContext = () => useContext(dayContext);
 const DayContext = ({ children }) => {
     const [currentDayIndex, setCurrentDayIndex] = useState(new Date().getDay());
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [isLoading, setIsLoading] = useState(false);
 
     const moveDay = (direction) => {
         setCurrentDayIndex((prevIndex) => {
@@ -25,8 +26,13 @@ const DayContext = ({ children }) => {
             return newDate;
         });
     };
+
+    const setIsLoadingCallback = (isLoading) => {
+        setIsLoading(isLoading);
+    }
+
     return (
-        <dayContext.Provider value={{currentDayIndex, currentDate,moveDay}}>
+        <dayContext.Provider value={{ currentDayIndex, currentDate, moveDay, isLoading, setIsLoadingCallback }}>
             {children}
         </dayContext.Provider>
     )

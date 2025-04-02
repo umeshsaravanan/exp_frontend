@@ -5,15 +5,16 @@ import AddExpense from '../components/AddExpense';
 import { useDayContext } from '../contexts/DayContext';
 import ExpenseCard from '../components/ExpenseCard';
 import axios from 'axios';
-import EmptyExpense from '../components/EmptyMessage';
+import EmptyMessage from '../components/EmptyMessage';
 import Loader from '../components/Loader';
+import DaySummary from '../components/DaySummary';
 
 const ManageExpense = () => {
-    const { currentDate, currentDayIndex, moveDay } = useDayContext();
+    const { currentDate, currentDayIndex, moveDay, isLoading, setIsLoadingCallback } = useDayContext();
 
     const [addClick, setAddClick] = useState(false);
     const [expenses, setExpenses] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [daySummary, setDaySummary] = useState({ income: 0, expense: 0 });
 
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const todayIndex = new Date().getDay();
@@ -31,22 +32,31 @@ const ManageExpense = () => {
         const fetchExpenses = async () => {
             if (!currentDate) return;
 
-            setIsLoading(true);
+            setIsLoadingCallback(true);
 
             try {
                 const formattedDate = new Date(currentDate).toISOString().split('T')[0];
                 const response = await axios.get(`http://localhost:8080/api/expense/expenses/${formattedDate}`, { withCredentials: true });
                 setExpenses(response?.data || []);
+                setDaySummary(calculateDaySummary(response?.data));
             } catch (error) {
                 console.error(error);
             } finally {
-                setIsLoading(false);
+                setIsLoadingCallback(false);
             }
         };
 
         setExpenses([]);
         fetchExpenses();
+
+        //eslint-disable-next-line
     }, [currentDate]);
+
+    const setExpensesCallback = (expense) => {
+        const newExpenses = [...expenses, expense];
+        setExpenses(newExpenses);
+        setDaySummary(calculateDaySummary(newExpenses));
+    }
 
     return (
         <div className="h-screen min-h-screen sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">
@@ -80,9 +90,10 @@ const ManageExpense = () => {
                     </div>
                 </div>
 
+                <DaySummary income={daySummary.income} expense={daySummary.expense} />
                 {/* Expense List */}
                 <div className="flex-1 overflow-auto w-full max-w-md mx-auto">
-                    {isLoading ? <Loader/> : getExpenses(expenses, setAddClick) }
+                    {getExpenses(expenses, setAddClick)}
                 </div>
 
                 <div className="flex justify-center items-center relative"
@@ -96,18 +107,34 @@ const ManageExpense = () => {
                                 </span>
                             )}
                         </div>
-                        {addClick && <AddExpense />}
+                        {addClick && <AddExpense setExpensesCallback={setExpensesCallback} />}
                     </div>
                 </div>
             </div>
+            {isLoading && <Loader />}
         </div>
     );
 };
 
 export default ManageExpense;
 
-const getExpenses = (expenses, setAddClick) =>{
+const getExpenses = (expenses, setAddClick) => {
     return expenses.length > 0 ? expenses.map((expense) => (
         <ExpenseCard key={expense.expenseName} expenseName={expense.expenseName} amount={expense.amount} type={expense.type} />
-    )) : <EmptyExpense onClick={() => setAddClick(true)} text="No Expense For the Day" />
+    )) : <EmptyMessage onClick={() => setAddClick(true)} text="No Expense For the Day" />
+}
+
+const calculateDaySummary = (expenses) => {
+    let income = 0;
+    let expense = 0;
+
+    for (let exp of expenses) {
+        if (exp.type === "in") {
+            income += exp.amount;
+        } else {
+            expense += exp.amount;
+        }
+    }
+
+    return { income, expense };
 }

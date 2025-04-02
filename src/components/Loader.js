@@ -1,12 +1,16 @@
 import React from "react";
-import { BiSolidCoinStack } from "react-icons/bi"; // Expense-related icon
+import { BiSolidCoinStack } from "react-icons/bi";
+
+import { useDayContext } from '../contexts/DayContext';
 
 const Loader = () => {
+    const { isLoading } = useDayContext();
+
+    if (!isLoading) return null;
+
     return (
-        <div className="flex items-center justify-center w-full h-full">
-            <div className="min-h-[200px]">
-                <BiSolidCoinStack className="w-12 h-12 text-[#30beb0] animate-spin" />
-            </div>
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <BiSolidCoinStack className="w-16 h-16 text-[#cc9b24] animate-spin" />
         </div>
     );
 };
