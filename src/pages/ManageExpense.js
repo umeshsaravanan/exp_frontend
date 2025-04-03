@@ -8,9 +8,11 @@ import axios from 'axios';
 import EmptyMessage from '../components/EmptyMessage';
 import Loader from '../components/Loader';
 import DaySummary from '../components/DaySummary';
+import { useContextApi } from '../contexts/AuthContext';
 
 const ManageExpense = () => {
     const { currentDate, currentDayIndex, moveDay, isLoading, setIsLoadingCallback } = useDayContext();
+    const { setIsAuthenticatedCallback, setErrorCallback } = useContextApi();
 
     const [addClick, setAddClick] = useState(false);
     const [expenses, setExpenses] = useState([]);
@@ -41,6 +43,8 @@ const ManageExpense = () => {
                 setDaySummary(calculateDaySummary(response?.data));
             } catch (error) {
                 console.error(error);
+                setIsAuthenticatedCallback(false);
+                setErrorCallback("UnAuthorized");
             } finally {
                 setIsLoadingCallback(false);
             }

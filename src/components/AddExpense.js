@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Button from "./Buttons/Button";
 import axios from 'axios';
 import { useDayContext } from '../contexts/DayContext';
+import { useContextApi } from '../contexts/AuthContext';
 
 //options
 //TODO : change this options to user specific and get from backend
@@ -26,6 +27,7 @@ const options = [
 
 const AddExpense = ({ setExpensesCallback }) => {
     const { currentDate, setIsLoadingCallback } = useDayContext();
+    const { setIsAuthenticatedCallback, setErrorCallback } = useContextApi();
 
     const [expense, setExpense] = useState({
         category: '',
@@ -69,6 +71,8 @@ const AddExpense = ({ setExpensesCallback }) => {
 
             setExpensesCallback(data);
         } catch (error) {
+            setIsAuthenticatedCallback(false);
+            setErrorCallback("UnAuthorized");
             console.error(error);
         } finally {
             setIsLoadingCallback(false);
