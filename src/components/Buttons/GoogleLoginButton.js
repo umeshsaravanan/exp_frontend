@@ -4,24 +4,34 @@ import { FcGoogle } from "react-icons/fc";
 import Button from "./Button";
 import axios from "axios";
 import { useContextApi } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const GoogleLogin = () => {
     const { setErrorCallback } = useContextApi();
+    const navigate = useNavigate();
+
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             try {
-                // const { data } =
-                 await axios.post(
+                const { data } = await axios.post(
                     'http://localhost:8080/api/google',
                     { token: response.access_token },
-                    { headers: { "Content-Type": "application/json" } }
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true
+                    }
                 );
+
+                if (data.jwtToken && data.userId) {
+                    document.cookie = `jwtToken=${data.jwtToken}; Path=/; Secure; SameSite=None; Max-Age=${3600 * 1000}`;
+                    document.cookie = `userId=${data.userId}; Path=/; Secure; SameSite=None; Max-Age=${3600 * 1000}`;
+                    navigate("/");
+                }
             } catch (error) {
                 console.error("Error during login:", error);
                 setErrorCallback("Something went wrong. Please try again later.");
-            } finally {
             }
         },
         onError: (error) => {
