@@ -1,64 +1,109 @@
 import React, { useEffect, useState } from 'react';
-import Button from "./Buttons/Button";
 import axios from 'axios';
+
+import Button from "./Buttons/Button";
 import { useDayContext } from '../contexts/DayContext';
 import { useContextApi } from '../contexts/AuthContext';
+import DropDown from './DropDown/DropDown';
 
-//options
-//TODO : change this options to user specific and get from backend
-const options = [
+const mockCategories = [
     {
         id: 2,
-        name: 'food'
+        name: 'Food',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    },
+    {
+        id: 1,
+        name: 'Transportation',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
     },
     {
         id: 3,
-        name: 'outing'
+        name: 'Entertainment',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
     },
     {
         id: 4,
-        name: 'tickets'
+        name: 'Utilities',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
     },
     {
         id: 5,
-        name: 'snacks'
+        name: 'Shopping',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
     }
-]
+];
+
+const typeOptions = [
+    { id: 'in', name: 'In' },
+    { id: 'out', name: 'Out' }
+];
 
 const AddExpense = ({ setExpensesCallback }) => {
     const { currentDate, setIsLoadingCallback } = useDayContext();
     const { setIsAuthenticatedCallback, setErrorCallback } = useContextApi();
 
     const [expense, setExpense] = useState({
-        category: '',
+        category: null,
         type: '',
         amount: '',
         time: new Date().toISOString().slice(0, 16),
     });
 
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                // setLoading(true);
+                // const { data } = await axios.get(
+                //     'http://localhost:8080/api/categories',
+                //     { withCredentials: true }
+                // );
+                setCategories(mockCategories);
+            } catch (error) {
+                console.error("Failed to fetch categories:", error);
+                setErrorCallback("Failed to load categories");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCategories();
+
         const currentTime = new Date();
         const formattedTime = currentTime.toTimeString().slice(0, 5);
         setExpense((prev) => ({ ...prev, time: formattedTime }));
+        //eslint-disable-next-line
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         setExpense((prev) => ({
             ...prev,
-            [name]: name === "category" ? options.find(opt => opt.id === Number(value)) : value,
+            [name]: value,
         }));
     };
 
-    const handleAdd = async () => {
+    const handleAddExpense = async () => {
         try {
+            if (!expense.category || !expense.type || !expense.amount) {
+                setErrorCallback("Please fill all fields");
+                return;
+            }
+
             setIsLoadingCallback(true);
 
             const payLoad = {
                 expenseName: expense.category.name,
                 categoryId: expense.category.id,
-                type: expense.type,
+                type: expense.type?.id,
                 amount: parseFloat(expense.amount),
                 addedAt: convertTimetoTimestamp(expense.time, currentDate)
             };
@@ -70,12 +115,59 @@ const AddExpense = ({ setExpensesCallback }) => {
             );
 
             setExpensesCallback(data);
+            
+            setExpense({
+                category: null,
+                type: '',
+                amount: '',
+                time: new Date().toTimeString().slice(0, 5),
+            });
         } catch (error) {
             setIsAuthenticatedCallback(false);
             setErrorCallback("UnAuthorized");
             console.error(error);
         } finally {
             setIsLoadingCallback(false);
+        }
+    };
+
+    const handleAddCategory = async (categoryName) => {
+        try {
+            setLoading(true);
+            const { data } = await axios.post(
+                'http://localhost:8080/api/categories',
+                { name: categoryName },
+                { withCredentials: true }
+            );
+
+            setCategories(prev => [...prev, data]);
+            setExpense(prev => ({ ...prev, category: data }));
+        } catch (error) {
+            console.error("Failed to add category:", error);
+            setErrorCallback("Failed to add category");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteCategory = async (categoryId) => {
+        try {
+            setLoading(true);
+            await axios.delete(
+                `http://localhost:8080/api/categories/${categoryId}`,
+                { withCredentials: true }
+            );
+
+            setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+            
+            if (expense.category?.id === categoryId) {
+                setExpense(prev => ({ ...prev, category: null }));
+            }
+        } catch (error) {
+            console.error("Failed to delete category:", error);
+            setErrorCallback("Failed to delete category");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -99,20 +191,17 @@ const AddExpense = ({ setExpensesCallback }) => {
                     <label htmlFor="category" className="block text-sm font-medium text-gray-700">
                         Category
                     </label>
-                    <select
-                        id="category"
-                        name="category"
-                        value={expense.category?.id || ""}
-                        onChange={handleChange}
-                        className="cursor-pointer mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#029688] focus:border-[#029688] sm:text-sm"
-                    >
-                        <option value="">Select Category</option>
-                        {options.map(option => (
-                            <option key={option.id} value={option.id}>
-                                {option.name}
-                            </option>
-                        ))}
-                    </select>
+                    <DropDown
+                        options={categories}
+                        selectedOption={expense.category}
+                        onSelect={(category) => setExpense(prev => ({ ...prev, category }))}
+                        onAddNew={handleAddCategory}
+                        onDelete={handleDeleteCategory}
+                        placeholder="Select Category"
+                        addNewLabel="Add category"
+                        loading={loading}
+                        search={true}
+                    />
                 </div>
             </div>
 
@@ -121,17 +210,14 @@ const AddExpense = ({ setExpensesCallback }) => {
                     <label htmlFor="type" className="block text-sm font-medium text-gray-700">
                         In/Out
                     </label>
-                    <select
-                        id="type"
-                        name="type"
-                        value={expense.type}
-                        onChange={handleChange}
-                        className="cursor-pointer mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#029688] focus:border-[#029688] sm:text-sm"
-                    >
-                        <option value="">Select Type</option>
-                        <option value="in">In</option>
-                        <option value="out">Out</option>
-                    </select>
+                    <DropDown
+                        options={typeOptions}
+                        selectedOption={expense.type}
+                        onSelect={(type) => setExpense(prev => ({ ...prev, type }))}
+                        placeholder="Select Type"
+                        loading={loading}
+                        search={false}
+                        />
                 </div>
 
                 <div>
@@ -148,7 +234,7 @@ const AddExpense = ({ setExpensesCallback }) => {
                     />
                 </div>
             </div>
-            <Button type="primary" text="Add" customStyle="w-full mt-3" onClick={handleAdd} />
+            <Button type="primary" text="Add Expense" customStyle="w-full mt-3" onClick={handleAddExpense} />
         </div>
     );
 };

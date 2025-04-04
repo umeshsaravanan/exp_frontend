@@ -12,6 +12,8 @@ const AuthContext = ({ children }) => {
     const [error, setError] = useState(null);
     const [username, setUsername] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isValidating, setIsValidating] = useState(false);
+    const [lastValidationAttempt, setLastValidationAttempt] = useState(0);
 
     const setErrorCallback = (error) => {
         setError(error);
@@ -34,9 +36,47 @@ const AuthContext = ({ children }) => {
         return null;
     };
 
-    useEffect(() => {
-        setError(null);
+    const validateToken = async (jwtToken) => {
+        try {
+            setIsValidating(true);
+            const { data } = await axios.post(
+                'http://localhost:8080/api/validate',
+                {},
+                {
+                    headers: { Authorization: `Bearer ${jwtToken}` },
+                    timeout: 5000 // 5 second timeout
+                }
+            );
 
+            if (data !== "Invalid Token") {
+                setUsername(data.username);
+                setIsAuthenticated(true);
+                setError(null);
+                navigate('/');
+            } else {
+                setIsAuthenticated(false);
+                setError("Session expired");
+                navigate('/login');
+            }
+        } catch (error) {
+            console.error("Validation error:", error);
+
+            if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
+                setError("Network error - please check your connection");
+                // Don't navigate to login on network errors
+                // Let the user continue with potentially cached credentials
+            } else {
+                setIsAuthenticated(false);
+                setError("Session validation failed");
+                navigate('/login');
+            }
+        } finally {
+            setIsValidating(false);
+            setLastValidationAttempt(Date.now());
+        }
+    };
+
+    useEffect(() => {
         const jwtToken = getCookie('jwtToken');
 
         if (!jwtToken) {
@@ -44,35 +84,34 @@ const AuthContext = ({ children }) => {
             return;
         }
 
-        const validate = async (jwtToken) => {
-            try {
-
-                const { data } = await axios.post('http://localhost:8080/api/validate', {}, {
-                    headers: { Authorization: `Bearer ${jwtToken}` }
-                })
-                if (data !== "Invalid Token") {
-                    setUsername(data.username);
-                    setIsAuthenticated(true);
-                    navigate('/');
-                } else {
-                    setIsAuthenticated(false);
-                    navigate('/login');
-                }
-            }
-            catch (error) {
-                console.error(error);
-                setIsAuthenticated(false);
-                navigate('/login');
-            }
+        // Throttle validation attempts - don't retry more than once every 10 seconds
+        const now = Date.now();
+        if (!isValidating && (now - lastValidationAttempt > 10000)) {
+            validateToken(jwtToken);
         }
 
-        validate(jwtToken);
+        // Set up periodic validation (every 5 minutes)
+        const intervalId = setInterval(() => {
+            if (!isValidating) {
+                validateToken(jwtToken);
+            }
+        }, 60*60*1000);
 
-    //eslint-disable-next-line
-    }, [isAuthenticated, error]);
+        return () => clearInterval(intervalId);
+
+        //eslint-disable-next-line
+    }, [isAuthenticated, error, isValidating, lastValidationAttempt]);
 
     return (
-        <contextApi.Provider value={{ username, error, isAuthenticated, setErrorCallback, setUsernameCallback, setIsAuthenticatedCallback }}>
+        <contextApi.Provider value={{
+            username,
+            error,
+            isAuthenticated,
+            isValidating,
+            setErrorCallback,
+            setUsernameCallback,
+            setIsAuthenticatedCallback
+        }}>
             {children}
         </contextApi.Provider>
     );
