@@ -1,20 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import Button from "./Button";
 import axios from "axios";
 import { useContextApi } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import ButtonLoader from "../Loaders/ButtonLoader";
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const GoogleLogin = () => {
+    const [isLoading, setIsLoading] = useState(false);
+
     const { setErrorCallback } = useContextApi();
     const navigate = useNavigate();
 
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             try {
+                setIsLoading(true);
                 const { data } = await axios.post(
                     'http://localhost:8080/api/google',
                     { token: response.access_token },
@@ -32,6 +36,8 @@ const GoogleLogin = () => {
             } catch (error) {
                 console.error("Error during login:", error);
                 setErrorCallback("Something went wrong. Please try again later.");
+            } finally {
+                setIsLoading(false);
             }
         },
         onError: (error) => {
@@ -47,10 +53,12 @@ const GoogleLogin = () => {
             type="google"
             onClick={login}
         >
-            <>
-                <FcGoogle className="text-xl bg-white rounded-full" />
-                <span>Continue With Google</span>
-            </>
+            {isLoading ? <ButtonLoader /> :
+                <>
+                    <FcGoogle className="text-xl bg-white rounded-full" />
+                    <span>Continue With Google</span>
+                </>
+            }
         </Button>
     );
 };

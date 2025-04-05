@@ -6,10 +6,13 @@ import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
 import GoogleLoginButton from '../components/Buttons/GoogleLoginButton';
 import { useContextApi } from '../contexts/AuthContext';
+import ButtonLoader from '../components/Loaders/ButtonLoader';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const { error, setErrorCallback } = useContextApi();
 
   const navigate = useNavigate();
@@ -18,6 +21,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      setIsLoading(true);
       const response = await axios.post('http://localhost:8080/api/login', {
         email,
         password,
@@ -31,6 +35,8 @@ const Login = () => {
     } catch (err) {
       setErrorCallback('Login Error');
       console.error('Error:', err);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -89,7 +95,9 @@ const Login = () => {
 
           {error && <ErrorMessage msg={error} />}
 
-          <Button type="primary" text="Login" customStyle="w-full" />
+          <Button type="primary" customStyle="w-full" >
+            {isLoading ? <ButtonLoader/> : "Login"}
+          </Button>
           <GoogleLoginButton />
         </form>
 
