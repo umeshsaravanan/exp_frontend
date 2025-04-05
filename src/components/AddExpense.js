@@ -6,42 +6,9 @@ import { useDayContext } from '../contexts/DayContext';
 import { useContextApi } from '../contexts/AuthContext';
 import DropDown from './DropDown/DropDown';
 
-const mockCategories = [
-    {
-        id: 2,
-        name: 'Food',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    },
-    {
-        id: 1,
-        name: 'Transportation',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    },
-    {
-        id: 3,
-        name: 'Entertainment',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    },
-    {
-        id: 4,
-        name: 'Utilities',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    },
-    {
-        id: 5,
-        name: 'Shopping',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    }
-];
-
 const typeOptions = [
-    { id: 'in', name: 'In' },
-    { id: 'out', name: 'Out' }
+    { categoryId: 'in', categoryName: 'In' },
+    { categoryId: 'out', categoryName: 'Out' }
 ];
 
 const AddExpense = ({ setExpensesCallback }) => {
@@ -61,12 +28,13 @@ const AddExpense = ({ setExpensesCallback }) => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                // setLoading(true);
-                // const { data } = await axios.get(
-                //     'http://localhost:8080/api/categories',
-                //     { withCredentials: true }
-                // );
-                setCategories(mockCategories);
+                setLoading(true);
+                const { data } = await axios.get(
+                    'http://localhost:8080/api/category/categories',
+                    { withCredentials: true }
+                );
+                
+                setCategories(data);
             } catch (error) {
                 console.error("Failed to fetch categories:", error);
                 setErrorCallback("Failed to load categories");
@@ -80,6 +48,7 @@ const AddExpense = ({ setExpensesCallback }) => {
         const currentTime = new Date();
         const formattedTime = currentTime.toTimeString().slice(0, 5);
         setExpense((prev) => ({ ...prev, time: formattedTime }));
+
         //eslint-disable-next-line
     }, []);
 
@@ -101,9 +70,9 @@ const AddExpense = ({ setExpensesCallback }) => {
             setIsLoadingCallback(true);
 
             const payLoad = {
-                expenseName: expense.category.name,
-                categoryId: expense.category.id,
-                type: expense.type?.id,
+                expenseName: expense.category.categoryName,
+                categoryId: expense.category.categoryId,
+                type: expense.type?.categoryId,
                 amount: parseFloat(expense.amount),
                 addedAt: convertTimetoTimestamp(expense.time, currentDate)
             };
@@ -135,8 +104,8 @@ const AddExpense = ({ setExpensesCallback }) => {
         try {
             setLoading(true);
             const { data } = await axios.post(
-                'http://localhost:8080/api/categories',
-                { name: categoryName },
+                'http://localhost:8080/api/category/add',
+                { categoryName },
                 { withCredentials: true }
             );
 

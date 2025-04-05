@@ -16,8 +16,8 @@ const DropDown = ({
     const [searchTerm, setSearchTerm] = useState('');
     const dropdownRef = useRef(null);
 
-    const filteredOptions = options.filter(option =>
-        option.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredOptions = options?.filter(option =>
+        option?.categoryName?.toLowerCase().includes(searchTerm?.toLowerCase())
     );
 
     const handleClickOutside = (event) => {
@@ -40,7 +40,7 @@ const DropDown = ({
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <span className="truncate">
-                    {selectedOption?.name || placeholder}
+                    {selectedOption?.categoryName || placeholder}
                 </span>
                 <svg
                     className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`}
@@ -69,9 +69,9 @@ const DropDown = ({
                         />
                     </div>}
                     <ul className="py-1">
-                        {filteredOptions.map((option) => (
+                        {filteredOptions.length > 0 && filteredOptions.map((option) => (
                             <li
-                                key={option.id}
+                                key={option?.categoryId}
                                 className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
                                 onClick={() => {
                                     onSelect(option);
@@ -79,12 +79,12 @@ const DropDown = ({
                                     setSearchTerm('');
                                 }}
                             >
-                                <span>{option.name}</span>
+                                <span>{option.categoryName}</span>
                                 {onDelete && (
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            onDelete(option.id);
+                                            onDelete(option.categoryId);
                                         }}
                                         className="text-red-500 hover:text-red-700"
                                         disabled={loading}
@@ -106,7 +106,7 @@ const DropDown = ({
                                 )}
                             </li>
                         ))}
-                        {searchTerm && !options.some(opt => opt.name.toLowerCase() === searchTerm.toLowerCase()) && onAddNew && (
+                        {searchTerm && !options.some(opt => opt?.categoryName?.toLowerCase() === searchTerm?.toLowerCase()) && onAddNew && (
                             <li className="px-3 py-2 hover:bg-gray-100">
                                 <div className="flex items-center">
                                     <span className="font-medium">{searchTerm}</span>

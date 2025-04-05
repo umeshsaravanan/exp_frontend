@@ -1,7 +1,8 @@
 import React from "react";
 import { BiSolidCoinStack } from "react-icons/bi";
 
-import { useDayContext } from '../contexts/DayContext';
+import { useDayContext } from "../../contexts/DayContext";
+
 
 const Loader = () => {
     const { isLoading } = useDayContext();

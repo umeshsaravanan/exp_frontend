@@ -6,9 +6,9 @@ import { useDayContext } from '../contexts/DayContext';
 import ExpenseCard from '../components/ExpenseCard';
 import axios from 'axios';
 import EmptyMessage from '../components/EmptyMessage';
-import Loader from '../components/Loader';
 import DaySummary from '../components/DaySummary';
 import { useContextApi } from '../contexts/AuthContext';
+import Loader from '../components/Loaders/Loader';
 
 const ManageExpense = () => {
     const { currentDate, currentDayIndex, moveDay, isLoading, setIsLoadingCallback } = useDayContext();
