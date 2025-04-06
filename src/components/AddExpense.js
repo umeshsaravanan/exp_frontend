@@ -30,7 +30,7 @@ const AddExpense = ({ setExpensesCallback }) => {
             try {
                 // setIsLoading(true);
                 const { data } = await axios.get(
-                    'http://localhost:8080/api/category/categories',
+                    `${process.env.REACT_APP_BACKEND_URL}/api/category/categories`,
                     { withCredentials: true }
                 );
                 
@@ -78,7 +78,7 @@ const AddExpense = ({ setExpensesCallback }) => {
             };
 
             const { data } = await axios.post(
-                'http://localhost:8080/api/expense/addExpense',
+                `${process.env.REACT_APP_BACKEND_URL}/api/expense/addExpense`,
                 payLoad,
                 { withCredentials: true }
             );
@@ -104,8 +104,8 @@ const AddExpense = ({ setExpensesCallback }) => {
         try {
             setIsLoading(true);
             const { data } = await axios.post(
-                'http://localhost:8080/api/category/add',
-                { categoryName },
+                `${process.env.REACT_APP_BACKEND_URL}/api/category/add`,
+                { name: categoryName },
                 { withCredentials: true }
             );
 
@@ -123,7 +123,7 @@ const AddExpense = ({ setExpensesCallback }) => {
         try {
             setIsLoading(true);
             await axios.delete(
-                `http://localhost:8080/api/category/delete/${categoryId}`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/category/delete/${categoryId}`,
                 { withCredentials: true }
             );
 

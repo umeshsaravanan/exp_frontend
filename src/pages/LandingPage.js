@@ -1,13 +1,8 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
     const menu = [{title:"Manage Expense", path: 'expense'}, {title: "Family", path: 'family'}, {title:"Trip", path: 'trip'}];
-
-    // useEffect(() =>{
-    //     axios.get('http://localhost:8080/api/dummy',{ withCredentials: true });
-    // },[])
 
     return (
         <div className="flex justify-center items-center min-h-screen p-2 sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">

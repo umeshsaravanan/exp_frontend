@@ -20,7 +20,7 @@ const GoogleLogin = () => {
             try {
                 setIsLoading(true);
                 const { data } = await axios.post(
-                    'http://localhost:8080/api/google',
+                    `${process.env.REACT_APP_BACKEND_URL}/api/google`,
                     { token: response.access_token },
                     {
                         headers: { "Content-Type": "application/json" },

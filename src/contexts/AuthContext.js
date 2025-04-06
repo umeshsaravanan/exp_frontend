@@ -40,7 +40,7 @@ const AuthContext = ({ children }) => {
         try {
             setIsValidating(true);
             const { data } = await axios.post(
-                'http://localhost:8080/api/validate',
+                `${process.env.REACT_APP_BACKEND_URL}/api/validate`,
                 {},
                 {
                     headers: { Authorization: `Bearer ${jwtToken}` },

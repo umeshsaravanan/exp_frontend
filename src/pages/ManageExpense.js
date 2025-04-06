@@ -38,7 +38,7 @@ const ManageExpense = () => {
 
             try {
                 const formattedDate = new Date(currentDate).toISOString().split('T')[0];
-                const response = await axios.get(`http://localhost:8080/api/expense/expenses/${formattedDate}`, { withCredentials: true });
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/expense/expenses/${formattedDate}`, { withCredentials: true });
                 setExpenses(response?.data || []);
                 setDaySummary(calculateDaySummary(response?.data));
             } catch (error) {
@@ -102,8 +102,8 @@ const ManageExpense = () => {
 
                 <div className="flex justify-center items-center relative"
                     onClick={() => setAddClick(true)}>
-                    <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-6">
-                        <div className="flex gap-3 justify-between">
+                    <div className="bg-white shadow-lg rounded-lg w-full max-w-md">
+                        <div className={`flex gap-3 justify-between px-6 ${addClick ? 'pt-4' : 'py-6'}`}>
                             <h3 className={`font-bold ${addClick ? '' : 'w-full text-center'}`}>Add Your Expense</h3>
                             {addClick && (
                                 <span className="text-white bg-black rounded-full p-1">
