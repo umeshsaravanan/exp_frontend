@@ -7,12 +7,12 @@ import { useContextApi } from '../contexts/AuthContext';
 import DropDown from './DropDown/DropDown';
 
 const typeOptions = [
-    { categoryId: 'in', categoryName: 'In' },
-    { categoryId: 'out', categoryName: 'Out' }
+    { id: 'in', name: 'In' },
+    { id: 'out', name: 'Out' }
 ];
 
 const AddExpense = ({ setExpensesCallback }) => {
-    const { currentDate, setIsLoadingCallback } = useDayContext();
+    const { currentDate } = useDayContext();
     const { setIsAuthenticatedCallback, setErrorCallback } = useContextApi();
 
     const [expense, setExpense] = useState({
@@ -23,12 +23,12 @@ const AddExpense = ({ setExpensesCallback }) => {
     });
 
     const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                setLoading(true);
+                // setIsLoading(true);
                 const { data } = await axios.get(
                     'http://localhost:8080/api/category/categories',
                     { withCredentials: true }
@@ -39,7 +39,7 @@ const AddExpense = ({ setExpensesCallback }) => {
                 console.error("Failed to fetch categories:", error);
                 setErrorCallback("Failed to load categories");
             } finally {
-                setLoading(false);
+                // setIsLoading(false);
             }
         };
 
@@ -67,12 +67,12 @@ const AddExpense = ({ setExpensesCallback }) => {
                 return;
             }
 
-            setIsLoadingCallback(true);
+            setIsLoading(true);
 
             const payLoad = {
-                expenseName: expense.category.categoryName,
-                categoryId: expense.category.categoryId,
-                type: expense.type?.categoryId,
+                expenseName: expense.category.name,
+                categoryId: expense.category.id,
+                type: expense.type?.id,
                 amount: parseFloat(expense.amount),
                 addedAt: convertTimetoTimestamp(expense.time, currentDate)
             };
@@ -96,13 +96,13 @@ const AddExpense = ({ setExpensesCallback }) => {
             setErrorCallback("UnAuthorized");
             console.error(error);
         } finally {
-            setIsLoadingCallback(false);
+            setIsLoading(false);
         }
     };
 
     const handleAddCategory = async (categoryName) => {
         try {
-            setLoading(true);
+            setIsLoading(true);
             const { data } = await axios.post(
                 'http://localhost:8080/api/category/add',
                 { categoryName },
@@ -115,15 +115,15 @@ const AddExpense = ({ setExpensesCallback }) => {
             console.error("Failed to add category:", error);
             setErrorCallback("Failed to add category");
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
 
     const handleDeleteCategory = async (categoryId) => {
         try {
-            setLoading(true);
+            setIsLoading(true);
             await axios.delete(
-                `http://localhost:8080/api/categories/${categoryId}`,
+                `http://localhost:8080/api/category/delete/${categoryId}`,
                 { withCredentials: true }
             );
 
@@ -136,7 +136,7 @@ const AddExpense = ({ setExpensesCallback }) => {
             console.error("Failed to delete category:", error);
             setErrorCallback("Failed to delete category");
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -168,7 +168,7 @@ const AddExpense = ({ setExpensesCallback }) => {
                         onDelete={handleDeleteCategory}
                         placeholder="Select Category"
                         addNewLabel="Add category"
-                        loading={loading}
+                        // loading={isLoading}
                         search={true}
                     />
                 </div>
@@ -184,7 +184,7 @@ const AddExpense = ({ setExpensesCallback }) => {
                         selectedOption={expense.type}
                         onSelect={(type) => setExpense(prev => ({ ...prev, type }))}
                         placeholder="Select Type"
-                        loading={loading}
+                        // loading={isLoading}
                         search={false}
                         />
                 </div>
@@ -203,7 +203,7 @@ const AddExpense = ({ setExpensesCallback }) => {
                     />
                 </div>
             </div>
-            <Button type="primary" text="Add Expense" customStyle="w-full mt-3" onClick={handleAddExpense} />
+            <Button type="primary" text="Add Expense" customStyle="w-full mt-3" onClick={handleAddExpense} isLoading={isLoading} />
         </div>
     );
 };

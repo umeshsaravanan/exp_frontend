@@ -6,7 +6,6 @@ import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
 import GoogleLoginButton from '../components/Buttons/GoogleLoginButton';
 import { useContextApi } from '../contexts/AuthContext';
-import ButtonLoader from '../components/Loaders/ButtonLoader';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -95,9 +94,8 @@ const Login = () => {
 
           {error && <ErrorMessage msg={error} />}
 
-          <Button type="primary" customStyle="w-full" >
-            {isLoading ? <ButtonLoader/> : "Login"}
-          </Button>
+          <Button type="primary" text="Login" isLoading={isLoading} customStyle="w-full" />
+
           <GoogleLoginButton />
         </form>
 

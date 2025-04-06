@@ -1,6 +1,7 @@
 import React from 'react'
+import ButtonLoader from '../Loaders/ButtonLoader';
 
-const Button = ({text, type, customStyle, onClick=() =>{}, children}) => {
+const Button = ({text, type, isLoading, customStyle, onClick=() =>{}, children}) => {
     let buttonClass = "px-8 py-2 font-semibold rounded-md duration-300 ";
 
     if(customStyle){
@@ -20,7 +21,7 @@ const Button = ({text, type, customStyle, onClick=() =>{}, children}) => {
     }
 
   return (
-    <button className={buttonClass} onClick={onClick} >{text || children}</button>
+    <button className={buttonClass} onClick={onClick} >{isLoading ? <ButtonLoader/> : children || text}</button>
   )
 }
 
