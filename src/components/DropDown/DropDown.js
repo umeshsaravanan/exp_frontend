@@ -57,7 +57,7 @@ const DropDown = ({
             </div>
 
             {isOpen && (
-                <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none max-h-40 overflow-auto">
+                <div className="absolute z-10 mt-1 w-full bg-slate-100 shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none max-h-40 overflow-auto">
                     {search && <div className="px-3 py-2 border-b">
                         <input
                             type="text"
@@ -72,7 +72,7 @@ const DropDown = ({
                         {filteredOptions.length > 0 && filteredOptions.map((option) => (
                             <li
                                 key={option?.categoryId}
-                                className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                                className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center border-b-[1px] border-gray-300"
                                 onClick={() => {
                                     onSelect(option);
                                     setIsOpen(false);

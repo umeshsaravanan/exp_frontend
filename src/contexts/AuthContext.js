@@ -44,7 +44,7 @@ const AuthContext = ({ children }) => {
                 {},
                 {
                     headers: { Authorization: `Bearer ${jwtToken}` },
-                    timeout: 5000 // 5 second timeout
+                    timeout: 5000
                 }
             );
 
@@ -52,7 +52,6 @@ const AuthContext = ({ children }) => {
                 setUsername(data.username);
                 setIsAuthenticated(true);
                 setError(null);
-                navigate('/');
             } else {
                 setIsAuthenticated(false);
                 setError("Session expired");
@@ -90,7 +89,6 @@ const AuthContext = ({ children }) => {
             validateToken(jwtToken);
         }
 
-        // Set up periodic validation (every 5 minutes)
         const intervalId = setInterval(() => {
             if (!isValidating) {
                 validateToken(jwtToken);
