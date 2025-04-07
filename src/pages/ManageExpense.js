@@ -9,6 +9,7 @@ import EmptyMessage from '../components/EmptyMessage';
 import DaySummary from '../components/DaySummary';
 import { useContextApi } from '../contexts/AuthContext';
 import Loader from '../components/Loaders/Loader';
+import BottomMenu from '../components/BottomMenu';
 
 const ManageExpense = () => {
     const { currentDate, currentDayIndex, moveDay, isLoading, setIsLoadingCallback } = useDayContext();
@@ -62,6 +63,10 @@ const ManageExpense = () => {
         setDaySummary(calculateDaySummary(newExpenses));
     }
 
+    const setAddClickCallback = (addClick) =>{
+        setAddClick(addClick);
+    }
+
     return (
         <div className="h-screen min-h-screen sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">
             <div className="h-full flex flex-col">
@@ -100,11 +105,10 @@ const ManageExpense = () => {
                     {getExpenses(expenses, setAddClick)}
                 </div>
 
-                <div className="flex justify-center items-center relative"
-                    onClick={() => setAddClick(true)}>
+                <div className="flex justify-center items-center relative">
                     <div className="bg-white shadow-lg rounded-lg w-full max-w-md">
-                        <div className={`flex gap-3 justify-between px-6 ${addClick ? 'pt-4' : 'py-6'}`}>
-                            <h3 className={`font-bold ${addClick ? '' : 'w-full text-center'}`}>Add Your Expense</h3>
+                        <div className={`flex gap-3 justify-between px-6 py-4`}>
+                            <BottomMenu addClick={addClick} setAddClickCallback={setAddClickCallback} />
                             {addClick && (
                                 <span className="text-white bg-black rounded-full p-1">
                                     <FaTimes size={20} onClick={(e) => { e.stopPropagation(); setAddClick(false); }} className="cursor-pointer" />
