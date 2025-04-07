@@ -7,6 +7,7 @@ import AuthContext from './contexts/AuthContext';
 import LandingPage from './pages/LandingPage';
 import ManageExpense from './pages/ManageExpense';
 import DayContext from './contexts/DayContext';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<LandingPage />} />
               <Route path="/expense" element={<ManageExpense />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Routes>
           </DayContext>
         </AuthContext>
