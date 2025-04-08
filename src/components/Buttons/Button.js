@@ -21,7 +21,7 @@ const Button = ({text, type, isLoading, customStyle, onClick=() =>{}, children})
     }
 
   return (
-    <button className={buttonClass} onClick={onClick} >{isLoading ? <ButtonLoader/> : children || text}</button>
+    <button className={"group " + buttonClass} onClick={onClick} >{isLoading ? <ButtonLoader/> : children || text}</button>
   )
 }
 
