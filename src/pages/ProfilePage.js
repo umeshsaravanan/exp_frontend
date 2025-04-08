@@ -1,14 +1,22 @@
 import axios from 'axios';
 import React from 'react';
 import { FaUserCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
     const username = 'John Doe';
     const email = 'john.doe@example.com';
+    const navigate = useNavigate();
 
     const handleLogout = async() =>{
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/app/logout`);
-        console.log(response);
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, null, { withCredentials: true });
+
+            if (response.status === 200)
+                navigate("/login"); 
+        } catch (error) {
+            console.error(error)
+        }
     }
     
     return (
