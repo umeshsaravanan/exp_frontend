@@ -10,7 +10,8 @@ const DropDown = ({
     onDelete,
     placeholder = "Select an option",
     loading = false,
-    search
+    search,
+    maxHeight = "40"
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -57,7 +58,7 @@ const DropDown = ({
             </div>
 
             {isOpen && (
-                <div className="absolute z-10 mt-1 w-full bg-slate-100 shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none max-h-40 overflow-auto">
+                <div className={`absolute z-10 mt-1 w-full bg-slate-100 shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none max-h-${maxHeight} overflow-auto`}>
                     {search && <div className="px-3 py-2 border-b">
                         <input
                             type="text"
