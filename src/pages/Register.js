@@ -35,9 +35,11 @@ const Register = () => {
   return (
     <div className="flex justify-center items-center min-h-screen p-2 sm:p-0 bg-gradient-to-br from-[#256a63] to-[#029688]">
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
-        <div className="flex items-center">
+        <div className="flex gap-4 items-center justify-center w-full">
           <img src="/images/exp_logo.png" alt="logo" className="w-[50px] h-[50px]" />
-          <h2 className="text-3xl font-bold text-[#029688]">Expense Tracker</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#029688]">
+            Expense Tracker
+          </h2>
         </div>
 
         <h3 className="text-3xl font-bold text-center mb-6 text-gray-700">
