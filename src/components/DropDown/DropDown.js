@@ -11,7 +11,7 @@ const DropDown = ({
     placeholder = "Select an option",
     loading = false,
     search,
-    maxHeight = "40"
+    maxHeight = 40
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');

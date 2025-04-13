@@ -107,7 +107,7 @@ const ManageExpense = () => {
 
                 <div className="flex justify-center items-center relative">
                     <div className="bg-white shadow-lg rounded-lg w-full max-w-md">
-                        <div className={`flex gap-3 justify-between px-6 py-4`}>
+                        <div className={`flex gap-3 justify-between px-6 py-2`}>
                             <BottomMenu addClick={addClick} setAddClickCallback={setAddClickCallback} />
                             {addClick && (
                                 <span className="text-white bg-black rounded-full p-1">

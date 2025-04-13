@@ -142,7 +142,7 @@ const AddExpense = ({ setExpensesCallback }) => {
     };
 
     return (
-        <div className="bg-white px-6 py-2 rounded-lg shadow-lg max-w-md mx-auto">
+        <div className="bg-white px-6 pb-2 rounded-lg shadow-lg max-w-md mx-auto">
             <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
                     <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
@@ -171,7 +171,7 @@ const AddExpense = ({ setExpensesCallback }) => {
                         addNewLabel="Add category"
                         // loading={isLoading}
                         search={true}
-                        maxHeight='32'
+                        maxHeight={32}
                     />
                 </div>
             </div>
