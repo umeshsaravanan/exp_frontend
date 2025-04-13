@@ -12,7 +12,7 @@ const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const GoogleLogin = () => {
     const [isLoading, setIsLoading] = useState(false);
 
-    const { setErrorCallback } = useContextApi();
+    const { setErrorCallback, setUserCallback } = useContextApi();
     const navigate = useNavigate();
 
     const login = useGoogleLogin({
@@ -31,6 +31,7 @@ const GoogleLogin = () => {
                 if (data.jwtToken && data.userId) {
                     document.cookie = `jwtToken=${data.jwtToken}; Path=/; Secure; SameSite=None; Max-Age=${3600 * 1000}`;
                     document.cookie = `userId=${data.userId}; Path=/; Secure; SameSite=None; Max-Age=${3600 * 1000}`;
+                    setUserCallback({name : data?.userName, email: data?.userMail});
                     navigate("/");
                 }
             } catch (error) {

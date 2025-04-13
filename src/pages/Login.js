@@ -12,7 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { error, setErrorCallback } = useContextApi();
+  const { error, setErrorCallback, setUserCallback } = useContextApi();
 
   const navigate = useNavigate();
   
@@ -26,7 +26,8 @@ const Login = () => {
         password,
       }, { withCredentials: true });
       
-      if (response.data === "Login successful"){
+      if (response.data?.message === "Login successful"){
+        setUserCallback({name : response.data?.userName, email: email});
         navigate("/");
       }
 

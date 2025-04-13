@@ -5,11 +5,10 @@ import { FiFolder, FiSettings } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 import ToggleButton from '../components/Buttons/ToggleButton';
+import { useContextApi } from '../contexts/AuthContext';
 
 const ProfilePage = () => {
-    const username = 'John Doe';
-    const email = 'john.doe@example.com';
-
+    const { user } = useContextApi();
     const navigate = useNavigate();
 
     const [showSettings, setShowSettings] = useState(false);
@@ -31,11 +30,11 @@ const ProfilePage = () => {
 
     return (
         <div className="max-w-md w-full mx-auto p-6 bg-white rounded-2xl shadow-lg flex flex-col items-center justify-between h-[100vh]">
-            <div className="flex items-center justify-between w-full h-36 p-4 rounded-3xl bg-[#256a63] text-white">
-                <FaUserCircle size={80} className="mb-4" />
-                <div className="flex flex-col gap-2 text-sm sm:text-base">
-                    <h2 className="text-xl sm:text-2xl font-semibold">{username}</h2>
-                    <p>{email}</p>
+            <div className="flex items-center justify-start gap-3 w-full h-36 p-4 rounded-3xl bg-[#256a63] text-white">
+                <FaUserCircle size={80} />
+                <div className="flex flex-col items-center justify-start gap-2 text-sm sm:text-base">
+                    <h2 className="w-full text-start text-xl sm:text-2xl font-semibold">{user?.name}</h2>
+                    <p className="w-full text-start">{user?.email}</p>
                 </div>
             </div>
 

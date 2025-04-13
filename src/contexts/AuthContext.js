@@ -10,7 +10,7 @@ const AuthContext = ({ children }) => {
     const navigate = useNavigate();
 
     const [error, setError] = useState(null);
-    const [username, setUsername] = useState(null);
+    const [user, setUser] = useState({});
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isValidating, setIsValidating] = useState(false);
     const [lastValidationAttempt, setLastValidationAttempt] = useState(0);
@@ -19,8 +19,8 @@ const AuthContext = ({ children }) => {
         setError(error);
     }
 
-    const setUsernameCallback = (name) => {
-        setUsername(name);
+    const setUserCallback = (user) => {
+        setUser(user);
     }
 
     const setIsAuthenticatedCallback = (isAuthenticated) => {
@@ -49,7 +49,6 @@ const AuthContext = ({ children }) => {
             );
 
             if (data !== "Invalid Token") {
-                setUsername(data.username);
                 setIsAuthenticated(true);
                 setError(null);
             } else {
@@ -102,12 +101,12 @@ const AuthContext = ({ children }) => {
 
     return (
         <contextApi.Provider value={{
-            username,
+            user,
             error,
             isAuthenticated,
             isValidating,
             setErrorCallback,
-            setUsernameCallback,
+            setUserCallback,
             setIsAuthenticatedCallback
         }}>
             {children}
