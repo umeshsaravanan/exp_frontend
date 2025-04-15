@@ -8,6 +8,7 @@ import LandingPage from './pages/LandingPage';
 import ManageExpense from './pages/ManageExpense';
 import DayContext from './contexts/DayContext';
 import ProfilePage from './pages/ProfilePage';
+import AxiosContext from './contexts/AxiosContext';
 
 function App() {
   return (
@@ -15,13 +16,15 @@ function App() {
       <Router>
         <AuthContext>
           <DayContext>
-            <Routes>
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/expense" element={<ManageExpense />} />
-              <Route path="/profile" element={<ProfilePage />} />
-            </Routes>
+            <AxiosContext>
+              <Routes>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/expense" element={<ManageExpense />} />
+                <Route path="/profile" element={<ProfilePage />} />
+              </Routes>
+            </AxiosContext>
           </DayContext>
         </AuthContext>
       </Router>

@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import Button from "./Button";
-import axios from "axios";
 import { useContextApi } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ButtonLoader from "../Loaders/ButtonLoader";
+import { useAxiosInstance } from "../../contexts/AxiosContext";
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
@@ -13,20 +13,14 @@ const GoogleLogin = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { setErrorCallback, setUserCallback } = useContextApi();
+    const axios = useAxiosInstance();
     const navigate = useNavigate();
 
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             try {
                 setIsLoading(true);
-                const { data } = await axios.post(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/google`,
-                    { token: response.access_token },
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        withCredentials: true
-                    }
-                );
+                const { data } = await axios.post(`/google`,{ token: response.access_token });
 
                 if (data.jwtToken && data.userId) {
                     document.cookie = `jwtToken=${data.jwtToken}; Path=/; Secure; SameSite=None; Max-Age=${3600 * 1000}`;
