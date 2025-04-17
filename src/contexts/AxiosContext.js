@@ -3,7 +3,7 @@ import React, { createContext, useContext } from 'react';
 
 const axiosContext = createContext();
 
-const useAxiosInstance = () => useContext(axiosContext);
+export const useAxiosInstance = () => useContext(axiosContext);
 
 const AxiosContext = ({ children }) => {
 
@@ -32,10 +32,10 @@ const AxiosContext = ({ children }) => {
 
 
     return (
-        <axiosContext.Provider value={axiosInstance}>
+        <axiosContext.Provider value={{axiosInstance}}>
             {children}
         </axiosContext.Provider>
     );
 };
 
-export { AxiosContext as default, useAxiosInstance };
+export default AxiosContext;

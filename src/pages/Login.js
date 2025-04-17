@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
 import GoogleLoginButton from '../components/Buttons/GoogleLoginButton';
 import { useContextApi } from '../contexts/AuthContext';
+import { useAxiosInstance } from '../contexts/AxiosContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,6 +13,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { error, setErrorCallback, setUserCallback } = useContextApi();
+  const {axiosInstance} = useAxiosInstance();
 
   const navigate = useNavigate();
   
@@ -21,17 +22,18 @@ const Login = () => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
+      const response = await axiosInstance.post(`/login`, {
         email,
         password,
-      }, { withCredentials: true });
+      });
       
-      if (response.data?.message === "Login successful"){
+      if (response.data?.message === "Login Successful"){
         setUserCallback({name : response.data?.userName, email: email});
         navigate("/");
+      }else{
+        setErrorCallback(response.data?.message);
       }
 
-      setErrorCallback(response.data);
     } catch (err) {
       setErrorCallback('Login Error');
       console.error('Error:', err);

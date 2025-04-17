@@ -13,14 +13,14 @@ const GoogleLogin = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { setErrorCallback, setUserCallback } = useContextApi();
-    const axios = useAxiosInstance();
+    const { axiosInstance } = useAxiosInstance();
     const navigate = useNavigate();
 
     const login = useGoogleLogin({
         onSuccess: async (response) => {
             try {
                 setIsLoading(true);
-                const { data } = await axios.post(`/google`,{ token: response.access_token });
+                const { data } = await axiosInstance.post(`/google`,{ token: response.access_token });
 
                 if (data.jwtToken && data.userId) {
                     document.cookie = `jwtToken=${data.jwtToken}; Path=/; Secure; SameSite=None; Max-Age=${3600 * 1000}`;

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { FiFolder, FiSettings } from 'react-icons/fi';
@@ -6,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 
 import ToggleButton from '../components/Buttons/ToggleButton';
 import { useContextApi } from '../contexts/AuthContext';
+import { useAxiosInstance } from '../contexts/AxiosContext';
 
 const ProfilePage = () => {
     const { user } = useContextApi();
     const navigate = useNavigate();
+    const {axiosInstance} = useAxiosInstance();
 
     const [showSettings, setShowSettings] = useState(false);
     const [darkMode, setDarkMode] = useState(false);
@@ -21,7 +22,7 @@ const ProfilePage = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, null, { withCredentials: true });
+            const response = await axiosInstance.post(`/logout`, null, { withCredentials: true });
             if (response.status === 200) navigate("/login");
         } catch (error) {
             console.error(error);
