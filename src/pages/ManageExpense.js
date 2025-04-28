@@ -4,16 +4,17 @@ import { FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import { useDayContext } from '../contexts/DayContext';
 import ExpenseCard from '../components/ExpenseCard';
-import axios from 'axios';
 import EmptyMessage from '../components/EmptyMessage';
 import DaySummary from '../components/DaySummary';
 import { useContextApi } from '../contexts/AuthContext';
 import Loader from '../components/Loaders/Loader';
 import BottomMenu from '../components/BottomMenu';
+import { useAxiosInstance } from '../contexts/AxiosContext';
 
 const ManageExpense = () => {
     const { currentDate, currentDayIndex, moveDay, isLoading, setIsLoadingCallback } = useDayContext();
-    const { setIsAuthenticatedCallback, setErrorCallback } = useContextApi();
+    const { setIsAuthenticatedCallback } = useContextApi();
+    const { axiosInstance } = useAxiosInstance();
 
     const [addClick, setAddClick] = useState(false);
     const [expenses, setExpenses] = useState([]);
@@ -39,13 +40,12 @@ const ManageExpense = () => {
 
             try {
                 const formattedDate = new Date(currentDate).toISOString().split('T')[0];
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/expense/expenses/${formattedDate}`, { withCredentials: true });
+                const response = await axiosInstance.get(`/expense/expenses/${formattedDate}`);
                 setExpenses(response?.data || []);
                 setDaySummary(calculateDaySummary(response?.data));
             } catch (error) {
                 console.error(error);
                 setIsAuthenticatedCallback(false);
-                setErrorCallback("UnAuthorized");
             } finally {
                 setIsLoadingCallback(false);
             }
@@ -63,7 +63,7 @@ const ManageExpense = () => {
         setDaySummary(calculateDaySummary(newExpenses));
     }
 
-    const setAddClickCallback = (addClick) =>{
+    const setAddClickCallback = (addClick) => {
         setAddClick(addClick);
     }
 
@@ -106,7 +106,7 @@ const ManageExpense = () => {
                 </div>
 
                 <div className="flex justify-center items-center relative">
-                    <div className="bg-white shadow-lg rounded-lg w-full max-w-md">
+                    <div className="bg-white shadow-lg rounded-lg w-full max-w-md py-2">
                         <div className={`flex gap-3 justify-between px-6 py-2`}>
                             <BottomMenu addClick={addClick} setAddClickCallback={setAddClickCallback} />
                             {addClick && (

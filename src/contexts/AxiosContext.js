@@ -11,28 +11,12 @@ const AxiosContext = ({ children }) => {
         baseURL: `${process.env.REACT_APP_BACKEND_URL}/api`,
         headers: {
             'Content-Type': 'application/json',
-        }
+        },
+        withCredentials: true
     });
-
-    const excludedEndpoints = ['/login', '/register', '/google'];
-
-    axiosInstance.interceptors.request.use((config) => {
-        const isExcluded = excludedEndpoints.some(endpoint =>
-            config.url.includes(endpoint)
-        );
-
-        if (!isExcluded) {
-            config.withCredentials = true;
-        }
-
-        return config;
-    }, (error) => {
-        return Promise.reject(error);
-    });
-
 
     return (
-        <axiosContext.Provider value={{axiosInstance}}>
+        <axiosContext.Provider value={{ axiosInstance }}>
             {children}
         </axiosContext.Provider>
     );

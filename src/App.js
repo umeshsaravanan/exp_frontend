@@ -14,9 +14,9 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <AuthContext>
-          <DayContext>
-            <AxiosContext>
+        <AxiosContext>
+          <AuthContext>
+            <DayContext>
               <Routes>
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
@@ -24,9 +24,9 @@ function App() {
                 <Route path="/expense" element={<ManageExpense />} />
                 <Route path="/profile" element={<ProfilePage />} />
               </Routes>
-            </AxiosContext>
-          </DayContext>
-        </AuthContext>
+            </DayContext>
+          </AuthContext>
+        </AxiosContext>
       </Router>
     </div>
 
