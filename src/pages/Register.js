@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '../components/Buttons/Button';
 import ErrorMessage from '../components/ErrorMessage';
 import { useContextApi } from '../contexts/AuthContext';
+import { useAxiosInstance } from '../contexts/AxiosContext';
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { error, setErrorCallback } = useContextApi();
   const navigate = useNavigate();
+  const { error, setErrorCallback } = useContextApi();
+  const { axiosInstance } = useAxiosInstance();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/register`, {
+      const { data } = await axiosInstance.post(`${process.env.REACT_APP_BACKEND_URL}/api/register`, {
         name : username,
         email,
         password,

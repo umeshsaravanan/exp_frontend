@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 
 import Button from "./Buttons/Button";
 import { useDayContext } from '../contexts/DayContext';
 import { useContextApi } from '../contexts/AuthContext';
 import DropDown from './DropDown/DropDown';
 import RadioButton from './Buttons/RadioButton';
+import { useAxiosInstance } from '../contexts/AxiosContext';
 
 const typeOptions = [
     { id: 'in', name: 'In' },
@@ -15,6 +15,7 @@ const typeOptions = [
 const AddExpense = ({ setExpensesCallback }) => {
     const { currentDate } = useDayContext();
     const { setIsAuthenticatedCallback, setErrorCallback } = useContextApi();
+    const { axiosInstance } = useAxiosInstance();
 
     const [expense, setExpense] = useState({
         category: null,
@@ -30,9 +31,8 @@ const AddExpense = ({ setExpensesCallback }) => {
         const fetchCategories = async () => {
             try {
                 // setIsLoading(true);
-                const { data } = await axios.get(
+                const { data } = await axiosInstance.get(
                     `${process.env.REACT_APP_BACKEND_URL}/api/category/categories`,
-                    { withCredentials: true }
                 );
 
                 setCategories(data);
@@ -78,10 +78,9 @@ const AddExpense = ({ setExpensesCallback }) => {
                 addedAt: convertTimetoTimestamp(expense.time, currentDate)
             };
 
-            const { data } = await axios.post(
+            const { data } = await axiosInstance.post(
                 `${process.env.REACT_APP_BACKEND_URL}/api/expense/addExpense`,
-                payLoad,
-                { withCredentials: true }
+                payLoad
             );
 
             setExpensesCallback(data);
@@ -104,10 +103,9 @@ const AddExpense = ({ setExpensesCallback }) => {
     const handleAddCategory = async (categoryName) => {
         try {
             setIsLoading(true);
-            const { data } = await axios.post(
+            const { data } = await axiosInstance.post(
                 `${process.env.REACT_APP_BACKEND_URL}/api/category/add`,
-                { name: categoryName },
-                { withCredentials: true }
+                { name: categoryName }
             );
 
             setCategories(prev => [...prev, data]);
@@ -123,9 +121,8 @@ const AddExpense = ({ setExpensesCallback }) => {
     const handleDeleteCategory = async (categoryId) => {
         try {
             setIsLoading(true);
-            await axios.delete(
-                `${process.env.REACT_APP_BACKEND_URL}/api/category/delete/${categoryId}`,
-                { withCredentials: true }
+            await axiosInstance.delete(
+                `${process.env.REACT_APP_BACKEND_URL}/api/category/delete/${categoryId}`
             );
 
             setCategories(prev => prev.filter(cat => cat.id !== categoryId));

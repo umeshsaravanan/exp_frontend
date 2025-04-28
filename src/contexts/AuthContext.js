@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useAxiosInstance } from './AxiosContext';
 
 const contextApi = createContext();
 
@@ -8,6 +8,7 @@ export const useContextApi = () => useContext(contextApi);
 
 const AuthContext = ({ children }) => {
     const navigate = useNavigate();
+    const { axiosInstance } = useAxiosInstance();
 
     const [error, setError] = useState(null);
     const [user, setUser] = useState({});
@@ -39,7 +40,7 @@ const AuthContext = ({ children }) => {
     const validateToken = async (jwtToken) => {
         try {
             setIsValidating(true);
-            const { data } = await axios.post(
+            const { data } = await axiosInstance.post(
                 `${process.env.REACT_APP_BACKEND_URL}/api/validate`,
                 {},
                 {
@@ -53,7 +54,6 @@ const AuthContext = ({ children }) => {
                 setError(null);
             } else {
                 setIsAuthenticated(false);
-                setError("Session expired");
                 navigate('/login');
             }
         } catch (error) {
@@ -92,7 +92,7 @@ const AuthContext = ({ children }) => {
             if (!isValidating) {
                 validateToken(jwtToken);
             }
-        }, 60*60*1000);
+        }, 60 * 60 * 1000);
 
         return () => clearInterval(intervalId);
 
